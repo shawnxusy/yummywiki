@@ -1,0 +1,17 @@
+{
+  "name": "yummywiki",
+  "description": "Wikipedia in a bite",
+  "version": "0.0.0",
+  "homepage": "https://yummywiki.com",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "1.3.x",
+    "angular-mocks": "1.3.x",
+    "jquery": "1.11.1",
+    "bootstrap": "~3.2.0",
+    "angular-route": "1.3.x",
+    "angular-resource": "1.3.x",
+    "angular-animate": "1.3.x"
+  }
+}

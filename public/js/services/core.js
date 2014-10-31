@@ -1,44 +1,22 @@
-var scotchTodo = angular.module('scotchTodo', []);
+'use strict';
 
-scotchTodo.controller('mainController', ['$scope', '$http', mainController]);
+var myApp = angular.module('myApp', [
+	'ngRoute',
+	'mainController'
+]);
 
-function mainController($scope, $http) {
-
-	$scope.formData = {};
-
-	// when landing on the page, get all todos and show them
-	$http.get('/api/todos')
-		.success(function(data) {
-			$scope.todos = data;
-			console.log(data);
-		})
-		.error(function(data) {
-			console.log('Error: ' + data);
-		});
-
-	// when submitting the add form, send the text to the node API
-	$scope.createTodo = function() {
-		$http.post('/api/todos', $scope.formData)
-			.success(function(data) {
-				$scope.formData = {}; // clear the form so our user is ready to enter another
-				$scope.todos = data;
-				console.log(data);
-			})
-			.error(function(data) {
-				console.log('Error: ' + data);
+myApp.config(['$routeProvider', 
+	function($routeProvider) {
+		$routeProvider.
+			when('/home', {
+				templateUrl: 'views/home.html',
+				controller: 'homeController'
+			}).
+			when('/search/:searchString', {
+				templateUrl: 'views/yummy.html',
+				controller: 'yummyController'
+			}).
+			otherwise({
+				redirectTo: '/home'
 			});
-	};
-
-	// delete a todo after checking it
-	$scope.deleteTodo = function(id) {
-		$http.delete('/api/todos/' + id)
-			.success(function(data) {
-				$scope.todos = data;
-				console.log(data);
-			})
-			.error(function(data) {
-				console.log('Error: ' + data);
-			});
-	};
-
-}
+}]);

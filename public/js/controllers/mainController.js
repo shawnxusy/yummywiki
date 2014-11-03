@@ -40,10 +40,15 @@ mainController.controller('yummyController', ['$scope', '$http', '$routeParams',
 		$http.get('/query/' + $routeParams.query)
 			.success(function(data) {
 				$scope.title = data.title;
-				$scope.infobox = $sce.trustAsHtml(data.infobox);
-				
+				$scope.infobox = data.infobox;
+				$scope.summary = data.summary;
+				$scope.toc = data.toc;
 			})
 		
+		// Render HTML source code as actual html, rather than raw
+		$scope.renderHtml = function(html_code) {
+			return $sce.trustAsHtml(html_code);
+		}
 		// when landing on the page, get all todos and show them
 		// $http.get('/api/todos')
 		// 	.success(function(data) {

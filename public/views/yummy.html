@@ -8,7 +8,23 @@
 	<div class="jumbotron text-center">
 		<h1> Info box </h1>
 	</div>
-	<div ng-bind-html="infobox"></div>
+	<div ng-bind-html="renderHtml(infobox)"></div>
 
-	
+	<div class="jumbotron text-center">
+		<h1> Summary </h1>
+	</div>
+	<div ng-repeat="s in summary">
+		<div ng-bind-html="renderHtml(s)"></div>
+	</div>
+
+
+	<div class="jumbotron text-center">
+		<h1> Table of contents </h1>
+	</div>
+	<ul class="list-group">
+		<li class="list-group-item" ng-repeat="t in toc">
+			<a ng-href="{{t.href}}">{{ t.content }}</a>
+		</li>
+	</ul>
+
 </div>

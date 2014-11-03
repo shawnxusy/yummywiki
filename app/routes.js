@@ -123,19 +123,79 @@
 				html = "<body>" + html + "</body>";
 				var $ = cheerio.load(html);
 
-				var data = {title: "", summary: [], infobox: ""};
+				var data = {title: "", summary: [], toc: [], infobox: ""};
 
 				// Add all body's children into an array for processing
 				var blocks = [];
 
+				/*
+					The way to capture data is using a bunch of flags.
+					For instance, when we detect that a summary paragraph is being processed
+					Set the summary_flag to true, and get the paragraphs in to summary array
+				 */
+				var flags = {
+					"summary_flag": true,
+					"toc_flag": false,
+					"main_content_flag": false,
+					"see_also_flag": false
+				};
+				// Helper function to set a called flag to be true and rest flags to be false
+				function setFlag(flag_name) {
+					flags[flag_name] = true;
+					for (var f in flags) {
+						if (f != flag_name) {
+							flags[f] = false;
+						};
+					};
+				};
+
 				$("body").children().each(function() {
-					// Is it a infobox?
-					if ($(this).attr("class")) {
-						if ($(this).attr("class").indexOf("infobox") > -1) {
+					// Some paragraph are empty, skip them
+					if (!$(this).text()) {
+						return true;
+					};
+
+					// Infobox is usually at the very beginning
+					if ( $(this).attr("class") && ($(this)[0].name == "table") ) {
+						if ( $(this).attr("class").indexOf("infobox") > -1 ) {
+							console.log("here?");
 							data.infobox = $(this).html();
-							// Deal with infobox here
 						}
-					} 
+					};
+					// Unfortunately some of the articles wrap infobox in a div...
+					if ($(this).children().first().attr("class")) {
+						// console.log($(this).children().first().attr("class"));
+						if ( $(this).children().first().attr("class").indexOf("infobox") > -1 ) {
+							console.log("Found a match");
+							data.infobox = $(this).children().first().html();
+						}
+					};
+
+
+					// Processing paragraphs
+					if ($(this)[0].name == 'p') {
+						// If it's a summary paragraph
+						if (flags["summary_flag"]) {
+							data.summary.push($(this).html());
+						}
+
+						// Deal with other paragraphs
+
+					};
+
+					// Processing table of content (toc)
+					// Could also get the "href" for each TOC link if necessary.
+					if ($(this).attr("id") == "toc") {
+						// First turn off the summary flag and open toc_flag
+						setFlag("toc_flag");
+
+						$(this).children("ul").children().each(function() {
+							var toc_item = {};
+							toc_item.href = $(this).find("a").attr("href");
+							toc_item.content = $(this).find(".toctext").text()
+							data.toc.push( toc_item );
+						})
+					}
 					
 				});
 				

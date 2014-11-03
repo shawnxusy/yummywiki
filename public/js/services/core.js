@@ -12,7 +12,7 @@ myApp.config(['$routeProvider',
 				templateUrl: 'views/home.html',
 				controller: 'homeController'
 			}).
-			when('/search/:searchString', {
+			when('/yummy/:query', {
 				templateUrl: 'views/yummy.html',
 				controller: 'yummyController'
 			}).

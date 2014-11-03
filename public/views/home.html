@@ -15,6 +15,13 @@
 
 					<button type="submit" class="btn btn-danger btn-lg" ng-click="search()">Yummy</button>
 				</form>
+
+				<ul class="list-group">
+					<li class="list-group-item" ng-repeat="q in ambQueries">
+						<a ng-click="accuSearch(q.url)" class="pointer">{{ q.title }}</a>
+					</li>
+				</ul>
+
 			</div>
 		</div>
 	</div>

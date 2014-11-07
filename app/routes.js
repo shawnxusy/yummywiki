@@ -123,7 +123,7 @@
 				html = "<body>" + html + "</body>";
 				var $ = cheerio.load(html);
 
-				var data = {title: "", summary: [], toc: [], infobox: ""};
+				var data = {title: "", summary: [], toc: [], infobox: "", content: []};
 
 				// Add all body's children into an array for processing
 				var blocks = [];
@@ -177,11 +177,30 @@
 						// If it's a summary paragraph
 						if (flags["summary_flag"]) {
 							data.summary.push($(this).html());
-						}
+						};
 
 						// Deal with other paragraphs
+						if (flags["main_content_flag"]) {
+							// Should also define other methods to deal with "See also" and "references"
 
+							// Find the latest section in data.content and pour data there
+							data.content[data.content.length - 1].paragraphs.push($(this).html());
+
+						};
 					};
+
+					// Processing headers
+					if ($(this)[0].name == 'h2') {
+						// Set the flag to main content to receive main paragraphs
+						setFlag("main_content_flag");
+
+						// Add a section in content
+						var newSection = {};
+						newSection.title = $(this).text();
+						newSection.paragraphs = [];
+
+						data.content.push(newSection);
+					}
 
 					// Processing table of content (toc)
 					// Could also get the "href" for each TOC link if necessary.
@@ -196,7 +215,6 @@
 							data.toc.push( toc_item );
 						})
 					}
-					
 				});
 				
 				// Is it the summary paragraph?

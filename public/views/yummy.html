@@ -27,4 +27,14 @@
 		</li>
 	</ul>
 
+	<div class="jumbotron text-center">
+		<h1> Main contents </h1>
+	</div>
+	<div ng-repeat="c in content">
+		<h2> {{c.title}} </h2>
+		<div ng-repeat="p in c.paragraphs">
+			<div ng-bind-html="renderHtml(p)"></div>
+		</div>
+	</div>
+
 </div>

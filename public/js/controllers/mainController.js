@@ -43,6 +43,7 @@ mainController.controller('yummyController', ['$scope', '$http', '$routeParams',
 				$scope.infobox = data.infobox;
 				$scope.summary = data.summary;
 				$scope.toc = data.toc;
+				$scope.content = data.content;
 			})
 		
 		// Render HTML source code as actual html, rather than raw

@@ -1,0 +1,61 @@
+/* ------ Global variables ------ */
+/* ------ Global definitions ------ */
+body {
+  margin: 0;
+  font-family: 'Lato', 'helvetica neue', sans-serif;
+  background-image: url('../img/stardust.png');
+}
+.container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+/* Vertically center almost any element */
+.vertical_center {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+/* -------- Global mixins -------- */
+/* ------ Yummy wiki ------ */
+.top-search {
+  height: 40px;
+}
+.top-search form {
+  height: 100%;
+}
+.top-search form input {
+  height: 100%;
+  width: 100%;
+  border: 0;
+  padding: 0 0 0 30px;
+  color: #f6ede2;
+  background-color: #00b9d2;
+  font-size: 0.9em;
+}
+.top-search form input:-moz-placeholder {
+  color: #f6ede2;
+}
+.top-search form input:-ms-input-placeholder {
+  color: #f6ede2;
+}
+.top-search form input::-webkit-input-placeholder {
+  color: #f6ede2;
+}
+.top-search form input:focus {
+  outline: none;
+}
+.left-summary {
+  width: 20%;
+}
+.left-summary .page-title {
+  height: 120px;
+  text-align: center;
+  overflow: hidden;
+}
+.left-summary .page-title h3 {
+  margin: 0;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}

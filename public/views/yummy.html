@@ -1,35 +1,35 @@
 <div class="container">
 
-	<!-- HEADER AND TODO COUNT -->
-	<div class="jumbotron text-center">
-		<h1>I'm a {{ title }}</h1>
+	<div class="top-search">
+		<form ng-submit="search()">
+			<input type="text" placeholder="Start a new search here and press enter" ng-model="searchString">
+		</form>
 	</div>
 
-	<div class="jumbotron text-center">
-		<h1> Info box </h1>
-	</div>
-	<div ng-bind-html="renderHtml(infobox)"></div>
+	<div class="left-summary">
+		<div class="page-title">
+			<h3> {{title}} </h3>
+		</div>
 
-	<div class="jumbotron text-center">
-		<h1> Summary </h1>
+		<div class="infobox">
+			<div ng-bind-html="renderHtml(infobox)"></div>
+		</div>
 	</div>
+
+	<h1> Summary </h1>
 	<div ng-repeat="s in summary">
 		<div ng-bind-html="renderHtml(s)"></div>
 	</div>
 
 
-	<div class="jumbotron text-center">
-		<h1> Table of contents </h1>
-	</div>
+	<h1> Table of contents </h1>
 	<ul class="list-group">
 		<li class="list-group-item" ng-repeat="t in toc">
 			<a ng-href="{{t.href}}">{{ t.content }}</a>
 		</li>
 	</ul>
 
-	<div class="jumbotron text-center">
-		<h1> Main contents </h1>
-	</div>
+	<h1> Main contents </h1>
 	<div ng-repeat="c in content">
 		<h2> {{c.title}} </h2>
 		<div ng-repeat="p in c.paragraphs">

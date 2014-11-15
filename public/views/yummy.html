@@ -6,35 +6,37 @@
 		</form>
 	</div>
 
-	<div class="left-summary">
+	<div class="top-yummy">
 		<div class="page-title">
 			<h3> {{title}} </h3>
 		</div>
-
-		<div class="infobox">
-			<div ng-bind-html="renderHtml(infobox)"></div>
+		<div class="summary">
+			<div class="summary-paragraphs">
+				<div ng-repeat="s in summary">
+					<div ng-bind-html="renderHtml(s)"></div>
+				</div>
+			</div>
 		</div>
 	</div>
 
-	<h1> Summary </h1>
-	<div ng-repeat="s in summary">
-		<div ng-bind-html="renderHtml(s)"></div>
+	<div class="infobox">
+		<div ng-bind-html="renderHtml(infobox)"></div>
 	</div>
 
+	<div class="content">
+		<div class="toc">
+			<div ng-repeat="t in toc" class="toc-item">
+				<p>{{ t.content }}</p>
+			</div>
+		</div>
+	</div>
 
-	<h1> Table of contents </h1>
-	<ul class="list-group">
-		<li class="list-group-item" ng-repeat="t in toc">
-			<a ng-href="{{t.href}}">{{ t.content }}</a>
-		</li>
-	</ul>
-
-	<h1> Main contents </h1>
+<!-- 	<h1> Main contents </h1>
 	<div ng-repeat="c in content">
 		<h2> {{c.title}} </h2>
 		<div ng-repeat="p in c.paragraphs">
 			<div ng-bind-html="renderHtml(p)"></div>
 		</div>
-	</div>
+	</div> -->
 
 </div>

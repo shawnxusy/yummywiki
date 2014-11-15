@@ -1,19 +1,25 @@
 /* ------ Global variables ------ */
-@nice_blue: #00b9d2;
-@font_color: #f6ede2;
+@nice_purple: #9898c2;
+@nice_pink: #cf3e61;
+@nice_yellow: #f8f4c4;
+@scroll_thumb_color: #f55e51;
+@background_color: #292c33;
+@font_color: #fffffe;
 @main_font: 'Lato', 'helvetica neue', sans-serif;
 
 /* ------ Global definitions ------ */
 body {
 	margin: 0;
 	font-family: @main_font;
-	background-image: url('../img/stardust.png');
+	background-color: @background_color;
+	color: @font_color;
 }
 
 .container {
 	margin: 0;
 	padding: 0;
 	width: 100%;
+	height: 100%;
 }
 
 /* Vertically center almost any element */
@@ -21,6 +27,30 @@ body {
 	position: relative;
 	top: 50%;
 	transform: translateY(-50%);
+}
+
+/* Scroll Bar redefinition */
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    background: @background_color;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    background: @nice_purple; 
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: @nice_purple; 
 }
 
 /* -------- Global mixins -------- */
@@ -36,9 +66,11 @@ body {
 	}
 }
 
-
 /* ------ Yummy wiki ------ */
 .top-search {
+	position: absolute;
+	top: 0;
+	width: 100%;
 	height: 40px;
 
 	form {
@@ -49,11 +81,11 @@ body {
 			width: 100%;
 			border: 0;
 			padding: 0 0 0 30px;
-			color: #f6ede2;
-			background-color: @nice_blue;
+			color: lighten(@nice_purple, 30%);
+			background-color: @nice_purple;
 			font-size: 0.9em;
 
-			.placeholder(@font_color);
+			.placeholder(lighten(@nice_purple, 20%));
 
 			&:focus {
 				outline: none;
@@ -62,12 +94,15 @@ body {
 	}
 }
 
-.left-summary {
-	width: 20%;
+.top-yummy {
+	position: absolute;
+	top: 40px;
 
 	.page-title {
+		width: 20%;
 		height: 120px;
 		text-align: center;
+		float: left;
 		overflow: hidden;
 
 		h3 {
@@ -75,5 +110,80 @@ body {
 			.vertical_center;
 		}
 	}
+
+	.summary {
+		height: 120px;
+		width: 80%;
+		padding: 10px 10px 10px 0;
+		float: right;
+		overflow-y: scroll;
+
+		a {
+			color: @font_color - #111;
+			border-bottom: 1px dashed (@font_color - #aaa);
+		}
+	}
 }
+
+.infobox {
+	position: absolute;
+	top: 160px;
+	width: 20%;
+	height: calc(~"100% - 180px");
+	padding: 0 10px 0 10px;
+	font-size: 0.9em;
+	overflow-y: scroll;
+
+	/* Get all image to 100% width */
+	a img {
+		width: 100%;
+		height: auto;
+	}
+
+	a {
+		color: @font_color - #111;
+		border-bottom: 1px dashed (@font_color - #aaa);
+	}
+
+	tr, th, table {
+		color: inherit !important;
+		background-color: inherit !important;
+	}
+}
+
+
+.content {
+	position: absolute;
+	top: 160px;
+	left: 20%;
+	width: 80%;
+	color: @font_color;
+
+	.toc {
+		height: 40px;
+		width: 100%;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		white-space: nowrap;
+
+		.toc-item {
+			padding: 10px 10px 0 10px;
+			font-weight: 500;
+			margin-right: 2px;
+			height: 100%;
+			color: @nice_yellow;
+			background-color: rgba(255,255,255,0.05);
+			display: inline-block;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
 

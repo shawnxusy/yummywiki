@@ -3,12 +3,14 @@
 body {
   margin: 0;
   font-family: 'Lato', 'helvetica neue', sans-serif;
-  background-image: url('../img/stardust.png');
+  background-color: #292c33;
+  color: #fffffe;
 }
 .container {
   margin: 0;
   padding: 0;
   width: 100%;
+  height: 100%;
 }
 /* Vertically center almost any element */
 .vertical_center {
@@ -16,9 +18,33 @@ body {
   top: 50%;
   transform: translateY(-50%);
 }
+/* Scroll Bar redefinition */
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  background: #292c33;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
+  background: #9898c2;
+  -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb:window-inactive {
+  background: #9898c2;
+}
 /* -------- Global mixins -------- */
 /* ------ Yummy wiki ------ */
 .top-search {
+  position: absolute;
+  top: 0;
+  width: 100%;
   height: 40px;
 }
 .top-search form {
@@ -29,33 +55,94 @@ body {
   width: 100%;
   border: 0;
   padding: 0 0 0 30px;
-  color: #f6ede2;
-  background-color: #00b9d2;
+  color: #f8f8fb;
+  background-color: #9898c2;
   font-size: 0.9em;
 }
 .top-search form input:-moz-placeholder {
-  color: #f6ede2;
+  color: #d8d8e8;
 }
 .top-search form input:-ms-input-placeholder {
-  color: #f6ede2;
+  color: #d8d8e8;
 }
 .top-search form input::-webkit-input-placeholder {
-  color: #f6ede2;
+  color: #d8d8e8;
 }
 .top-search form input:focus {
   outline: none;
 }
-.left-summary {
-  width: 20%;
+.top-yummy {
+  position: absolute;
+  top: 40px;
 }
-.left-summary .page-title {
+.top-yummy .page-title {
+  width: 20%;
   height: 120px;
   text-align: center;
+  float: left;
   overflow: hidden;
 }
-.left-summary .page-title h3 {
+.top-yummy .page-title h3 {
   margin: 0;
   position: relative;
   top: 50%;
   transform: translateY(-50%);
+}
+.top-yummy .summary {
+  height: 120px;
+  width: 80%;
+  padding: 10px 10px 10px 0;
+  float: right;
+  overflow-y: scroll;
+}
+.top-yummy .summary a {
+  color: #eeeeed;
+  border-bottom: 1px dashed #555554;
+}
+.infobox {
+  position: absolute;
+  top: 160px;
+  width: 20%;
+  height: calc(100% - 180px);
+  padding: 0 10px 0 10px;
+  font-size: 0.9em;
+  overflow-y: scroll;
+  /* Get all image to 100% width */
+}
+.infobox a img {
+  width: 100%;
+  height: auto;
+}
+.infobox a {
+  color: #eeeeed;
+  border-bottom: 1px dashed #555554;
+}
+.infobox tr,
+.infobox th,
+.infobox table {
+  color: inherit !important;
+  background-color: inherit !important;
+}
+.content {
+  position: absolute;
+  top: 160px;
+  left: 20%;
+  width: 80%;
+  color: #fffffe;
+}
+.content .toc {
+  height: 40px;
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+.content .toc .toc-item {
+  padding: 10px 10px 0 10px;
+  font-weight: 500;
+  margin-right: 2px;
+  height: 100%;
+  color: #f8f4c4;
+  background-color: rgba(255, 255, 255, 0.05);
+  display: inline-block;
 }

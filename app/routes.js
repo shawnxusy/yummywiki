@@ -139,6 +139,9 @@
 					"main_content_flag": false,
 					"see_also_flag": false
 				};
+
+				var infoboxDone = false;
+
 				// Helper function to set a called flag to be true and rest flags to be false
 				function setFlag(flag_name) {
 					flags[flag_name] = true;
@@ -157,9 +160,10 @@
 
 					// Infobox is usually at the very beginning
 					if ( $(this).attr("class") && ($(this)[0].name == "table") ) {
-						if ( $(this).attr("class").indexOf("infobox") > -1 ) {
-							console.log("here?");
+						// There could be multiple infoboxes, only pick the first one
+						if ( ($(this).attr("class").indexOf("infobox") > -1) && (!infoboxDone) ) {
 							data.infobox = $(this).html();
+							infoboxDone = true;
 						}
 					};
 					// Unfortunately some of the articles wrap infobox in a div...
@@ -170,7 +174,6 @@
 							data.infobox = $(this).children().first().html();
 						}
 					};
-
 
 					// Processing paragraphs
 					if ($(this)[0].name == 'p') {
@@ -210,8 +213,7 @@
 
 						$(this).children("ul").children().each(function() {
 							var toc_item = {};
-							toc_item.href = $(this).find("a").attr("href");
-							toc_item.content = $(this).find(".toctext").text()
+							toc_item.content = $(this).find(".toctext").first().text();
 							data.toc.push( toc_item );
 						})
 					}

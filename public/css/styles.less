@@ -15,6 +15,11 @@ body {
 	color: @font_color;
 }
 
+/* For Angular Bootstrap */
+.nav, .pagination, .carousel, .panel-title a { 
+	cursor: pointer; 
+}
+
 .container {
 	margin: 0;
 	padding: 0;
@@ -31,8 +36,8 @@ body {
 
 /* Scroll Bar redefinition */
 ::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
+    width: 7px;
+    height: 5px;
 }
  
 /* Track */
@@ -159,15 +164,15 @@ body {
 	width: 80%;
 	color: @font_color;
 
-	.toc {
+	ul {
 		height: 40px;
 		width: 100%;
 		overflow-x: scroll;
 		overflow-y: hidden;
 		white-space: nowrap;
+		border-bottom: none;
 
-		.toc-item {
-			padding: 10px 10px 0 10px;
+		.ng-isolate-scope {
 			font-weight: 500;
 			margin-right: 2px;
 			height: 100%;
@@ -175,10 +180,67 @@ body {
 			background-color: rgba(255,255,255,0.05);
 			display: inline-block;
 		}
+
+		li {
+			float: inherit !important;
+
+			a {
+				padding: 10px 10px 0 10px;
+				margin: 0;
+				border: none;
+				border-radius: inherit;
+				color: inherit;
+			}
+
+			&:hover {
+				background-color: lighten(@nice_yellow, 10%);
+				color: @background_color;
+			};
+		}
+
+		li.active {
+			background-color: @nice_yellow;
+			border: none;
+			color: @background_color;
+
+			a {
+				color: inherit;
+				background-color: inherit;
+				border: none;
+
+				&:hover {
+					background-color: transparent;
+					border: none;
+				}
+			}
+
+
+		}
+
+		a:hover {
+			background-color: transparent;
+		}
+	}
+
+	.tab-content {
+		padding: 5px 10px 0 5px;
+		height: 250px;
+		overflow-y: scroll;
+		overflow-x: hidden;
+		a {
+			color: @font_color - #111;
+			border-bottom: 1px dashed (@font_color - #aaa);
+		}
 	}
 }
 
-
+.knowledge-graph {
+	position: absolute;
+	top: 450px;
+	left: 20%;
+	width: 80%;
+	height: calc(~"100% - 450px");
+}
 
 
 

@@ -114,7 +114,6 @@
 		// Main processing goes on here
 		// Query the raw Wikipedia and gives back results
 		var url = "http://en.wikipedia.org/w/index.php?action=render&title=" + text;
-		console.log(url);
 
 		request(url, function(error, response, html) {
 			if (!error) {
@@ -137,7 +136,7 @@
 					"summary_flag": true,
 					"toc_flag": false,
 					"main_content_flag": false,
-					"see_also_flag": false
+					"related_flag": false,
 				};
 
 				var infoboxDone = false;
@@ -168,10 +167,9 @@
 					};
 					// Unfortunately some of the articles wrap infobox in a div...
 					if ($(this).children().first().attr("class")) {
-						// console.log($(this).children().first().attr("class"));
-						if ( $(this).children().first().attr("class").indexOf("infobox") > -1 ) {
-							console.log("Found a match");
+						if ( ($(this).children().first().attr("class").indexOf("infobox") > -1) && (!infoboxDone) ) {
 							data.infobox = $(this).children().first().html();
+							infoboxDone = true;
 						}
 					};
 
@@ -188,21 +186,25 @@
 
 							// Find the latest section in data.content and pour data there
 							data.content[data.content.length - 1].paragraphs.push($(this).html());
-
 						};
 					};
 
 					// Processing headers
 					if ($(this)[0].name == 'h2') {
 						// Set the flag to main content to receive main paragraphs
-						setFlag("main_content_flag");
+						if ($(this).children().first().text() == 'See also') {
+							setFlag("related_flag");
+						}
+						else {
+							setFlag("main_content_flag");
 
-						// Add a section in content
-						var newSection = {};
-						newSection.title = $(this).text();
-						newSection.paragraphs = [];
+							// Add a section in content
+							var newSection = {};
+							newSection.title = $(this).text();
+							newSection.paragraphs = [];
 
-						data.content.push(newSection);
+							data.content.push(newSection);
+						}
 					}
 
 					// Processing table of content (toc)
@@ -217,6 +219,50 @@
 							data.toc.push( toc_item );
 						})
 					}
+
+					// Processing see also
+					// Output would be JSON format
+					// if (flags["related_flag"] && ($(this)[0].name != "h2")) {
+					// 	// As soon as there is a ul, go for it
+					// 	var list = [];
+					// 	if ($(this)[0].name == "ul") {
+					// 		list = $(this).children();
+					// 	}
+					// 	else if ($(this).has("ul").length > 0) {
+					// 		list = $(this).find("ul").children();
+					// 	}
+
+					// 	if (list.length) {
+					// 		// Do the processing
+					// 		data.related["nodes"] = [];
+					// 		data.related["links"] = [];
+
+					// 		// If we are certain there is some topics related to this one
+					// 		// Start with the first circle
+					// 		var original = {"name": text, "group": 0};
+					// 		data.related["nodes"].push(original);
+
+					// 		var depth = 3; // This defines how far we should go		
+							
+					// 		var currentGroup = 0;
+
+					// 		for (var i = 0; i < list.length; i++) {
+					// 			var newNode = {"name": $(list[i]).text(), "group": 1};
+					// 			var newLink = {"source": i+1, "target": 0, "value": 1};
+					// 			data.related["nodes"].push(newNode);
+					// 			data.related["links"].push(newLink);
+
+					// 			var secondLayer = processNode($(list[i]).find("a").attr("href"));
+					// 			console.log(secondLayer);
+
+					// 		}
+
+					// 	}
+					// 	else {
+					// 		// There is nothing related to this topic
+					// 	}
+					// }
+					
 				});
 				
 				// Is it the summary paragraph?
@@ -229,6 +275,184 @@
 
 		
 	});
+
+	
+	app.get('/graph/:text', function(req, res) {
+		var text = req.params.text;
+		var firstLevelSectionsURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + text;
+
+		var data = {related: {}};
+		data.related["nodes"] = [];
+		data.related["links"] = [];
+
+		var currentNode = 0;
+
+		var original = {"name": text, "group": 0};
+		data.related["nodes"].push(original);
+		currentNode = currentNode + 1;
+
+		function getFirstLevelSections(url, callback) {
+			request(url, function(error, response, json) {
+			if (!error) {
+				var sections = JSON.parse(json).parse.sections;
+				for (var i = 0; i < sections.length; i++) {
+					if (sections[i].anchor === "See_also") {
+						var firstLevelContentURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + text + "&prop=text&section=" + sections[i].index;
+						getFirstLevelContent(firstLevelContentURL, callback);
+					}
+				}
+			}
+			});
+		}
+
+		function getFirstLevelContent(url, callback) {
+			request(url, function(error, response, json) {
+			if (!error) {
+				var content = JSON.parse(json);
+				var $ = cheerio.load(content.parse.text["*"]);
+				var listLength = $("li").length;
+
+				$("li").each(function() {
+					// Push each title to result and form links
+					var newNode = {"name": $(this).text(), "group": 1};
+					var newLink = {"source": currentNode, "target": 0, "value": 2};
+					data.related["nodes"].push(newNode);
+					data.related["links"].push(newLink);
+
+					var href = $(this).find("a").attr("href");
+					var secondLevelSectionsURL =  "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + href.substring(href.search("wiki/") + 5) + "&prop=sections";
+
+					listLength = listLength - 1;
+					if (listLength > 0) {
+						getSecondLevelSections(secondLevelSectionsURL, currentNode, false, callback);
+						console.log("first level content: not last");
+					}
+					else {
+						getSecondLevelSections(secondLevelSectionsURL, currentNode, true, callback);
+						console.log("first level content: last");
+
+					}
+					// console.log($(this).text());
+					// console.log(currentNode);
+					// seeAlsoList.push($(this).text());
+					currentNode = currentNode + 1;
+				});
+
+			}
+			});
+
+		}
+
+		function getSecondLevelSections(url, current, last, callback) {
+			request(url, function(error, response, json) {
+				if (!error) {
+					var sections = JSON.parse(json).parse.sections;
+					for (var i = 0; i < sections.length; i++) {
+						if (sections[i].anchor === "See_also") {
+							var secondLevelContentURL = url.substring(0, url.search("&prop")) + "&prop=text&section=" + sections[i].index;
+							console.log(secondLevelContentURL);
+							getSecondLevelContent(secondLevelContentURL, current, last, callback);
+						}
+					};
+				}
+			})
+		}
+
+		function getSecondLevelContent(url, target, last, callback) {
+			request(url, function(error, response, json) {
+			if (!error) {
+				var content = JSON.parse(json);
+				var $ = cheerio.load(content.parse.text["*"]);
+				var listLength = $("li").length;
+
+				$("li").each(function() {
+					// Push each title to result and form links
+					var newNode = {"name": $(this).text(), "group": 2};
+					var newLink = {"source": currentNode, "target": target, "value": 1};
+					data.related["nodes"].push(newNode);
+					data.related["links"].push(newLink);
+
+					currentNode = currentNode + 1;
+				});
+
+				if (last === true) {
+					callback();
+				}
+			}
+			});
+		}
+		
+		getFirstLevelSections(firstLevelSectionsURL, function(){
+			// console.log(data);
+			res.json(data);
+		});
+
+
+
+	});
+
+	// Helper function to return second layer connections
+ 	function processNode(address) {
+		var getSectionsURL =  "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + address.substring(address.search("wiki/") + 5) + "&prop=sections";
+		var seeAlsoList = [];
+
+		request(getSectionsURL, function(error, response, json) {
+			if (!error) {
+				var sections = JSON.parse(json).parse.sections;
+				for (var i = 0; i < sections.length; i++) {
+					if (sections[i].anchor === "See_also") {
+						// return (getSeeAlsoContent(sections[i].index));
+						var getSeeAlsoURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + address.substring(address.search("wiki/") + 5) + "&prop=text&section=" + sections[i].index;
+						// var seeAlsoList = [];
+
+						request(getSeeAlsoURL, function(error, response, json) {
+							if (!error) {
+								var seeAlso = JSON.parse(json);
+								var $ = cheerio.load(seeAlso.parse.text["*"]);
+
+								$("li").each(function() {
+									seeAlsoList.push($(this).text());
+								});
+
+								console.log("2nd inner list: ");
+								console.log(seeAlsoList);
+
+								// return seeAlsoList;
+							}
+						});
+									
+					}
+				}
+			}
+		});
+
+		return seeAlsoList;
+	}
+
+	// Make another request to retrieve the links
+	function getSeeAlsoContent(sectionNumber) {
+		var getSeeAlsoURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + address.substring(address.search("wiki/") + 5) + "&prop=text&section=" + sectionNumber;
+
+		var seeAlsoList = [];
+
+		request(getSeeAlsoURL, function(error, response, json) {
+			if (!error) {
+				var seeAlso = JSON.parse(json);
+				var $ = cheerio.load(seeAlso.parse.text["*"]);
+
+				$("li").each(function() {
+					seeAlsoList.push($(this).text());
+				});
+
+				console.log("2nd inner list: ");
+				console.log(seeAlsoList);
+
+				return seeAlsoList;
+			}
+		});
+	}
+
+	
 
 	// application -------------------------------------------------------------
 	app.get('*', function(req, res) {

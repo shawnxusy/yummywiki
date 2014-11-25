@@ -23,20 +23,18 @@
 		<div ng-bind-html="renderHtml(infobox)"></div>
 	</div>
 
+
 	<div class="content">
-		<div class="toc">
-			<div ng-repeat="t in toc" class="toc-item">
-				<p>{{ t.content }}</p>
-			</div>
-		</div>
+		<tabset>
+			<tab ng-repeat="c in content" heading="{{ c.title }}" active="c.active" disabled="c.disabled">
+				<div ng-repeat="p in c.paragraphs">
+					<div ng-bind-html="renderHtml(p)"></div>
+				</div>
+			</tab>
+		</tabset>
 	</div>
 
-<!-- 	<h1> Main contents </h1>
-	<div ng-repeat="c in content">
-		<h2> {{c.title}} </h2>
-		<div ng-repeat="p in c.paragraphs">
-			<div ng-bind-html="renderHtml(p)"></div>
-		</div>
-	</div> -->
+	<knowledge-graph bar-height="20" bar-padding="5" class="knowledge-graph" data="data" on-click="showDetail(item)">
+	</knowledge-graph>
 
 </div>

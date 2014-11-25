@@ -2,7 +2,9 @@
 
 var myApp = angular.module('myApp', [
 	'ngRoute',
-	'mainController'
+	'mainController',
+	'ui.bootstrap',
+	'd3Directive',
 ]);
 
 myApp.config(['$routeProvider', 

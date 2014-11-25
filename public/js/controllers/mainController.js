@@ -36,6 +36,7 @@ mainController.controller('homeController', ['$scope', '$routeParams', '$locatio
 mainController.controller('yummyController', ['$scope', '$http', '$routeParams', '$sce',
 	function($scope, $http, $routeParams, $sce) {
 
+
 		// Ask Node for the content of a Wikipedia query
 		$http.get('/query/' + $routeParams.query)
 			.success(function(data) {
@@ -43,13 +44,37 @@ mainController.controller('yummyController', ['$scope', '$http', '$routeParams',
 				$scope.infobox = data.infobox;
 				$scope.summary = data.summary;
 				$scope.toc = data.toc;
+
+				for (item in data.content) {
+					item.disabled = true;
+				}
+				data.content[0].active = true;
+				data.content[0].disabled = false;
+				
 				$scope.content = data.content;
+
+				// $scope.data = data.related;
+
+				$scope.showDetail = function(item) {
+					console.log("clicked");
+					alert(item.name);
+				};
+			}
+		)
+
+		$http.get('/graph/' + $routeParams.query)
+			.success(function(data) {
+				console.log(data.related);
+				$scope.data = data.related;
 			})
 		
 		// Render HTML source code as actual html, rather than raw
 		$scope.renderHtml = function(html_code) {
 			return $sce.trustAsHtml(html_code);
 		}
+
+	
+
 		// when landing on the page, get all todos and show them
 		// $http.get('/api/todos')
 		// 	.success(function(data) {

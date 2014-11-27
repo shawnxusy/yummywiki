@@ -12,23 +12,23 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 				var margin = parseInt(attrs.margin) || 10,
 					barPadding = parseInt(attrs.barPadding) || 5,
 					barHeight = parseInt(attrs.barHeight) || 20,
-					width = element[0].clientWidth * 0.5,
+					width = element[0].clientWidth,
 					height = element[0].clientHeight;
 
 
 				// The returned d3 is the d3 drawing object
 				var svg = d3.select(element[0])
 							.append("svg")
-							.attr('width', '70%')
+							.attr('width', '100%')
 							.attr('height', '100%')
 							.style('float', 'left');
 
-				var infobox = d3.select(element[0])
-								.append("div")
-								.attr('width', '30%')
-								.attr('height', '100%')
-								.style('float', 'right')
-								.style('width', '30%');
+				// var infobox = d3.select(element[0])
+				// 				.append("div")
+				// 				.attr('width', '30%')
+				// 				.attr('height', '100%')
+				// 				.style('float', 'right')
+				// 				.style('width', '30%');
 
 				// Browser onresize event
 				window.onresize = function() {
@@ -45,7 +45,6 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 
 				// Watching for data change
 				scope.$watch('data', function(newVals, oldVals) {
-					console.log("watching");
 					return scope.render(newVals);
 				}, true);
 
@@ -125,14 +124,14 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 							.style("fill", "#2be3d6")
 							.ease("elastic");
 
-						infobox.append("text")
-							.text(d3.select(this).text());
+						// infobox.append("text")
+						// 	.text(d3.select(this).text());
 
 					};
 
 					function nodeUnHovered() {
 						// Clear everything
-						infobox.selectAll("*").remove();
+						// infobox.selectAll("*").remove();
 						svg.selectAll("circle").style("fill", function(d) {
 							return color(d.group);
 						});
@@ -141,6 +140,8 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 
 					//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
 					force.on("tick", function () {
+						node[0].x = width / 2;
+						node[0].y = height / 2;
 					    link.attr("x1", function (d) {
 					        return d.source.x;
 					    })

@@ -134,70 +134,70 @@ body {
   position: absolute;
   top: 160px;
   left: 20%;
-  width: 80%;
+  width: 50%;
+  height: calc(100% - 180px);
   color: #fffffe;
 }
-.content ul {
-  height: 40px;
-  width: 100%;
-  overflow-x: scroll;
-  overflow-y: hidden;
-  white-space: nowrap;
-  border-bottom: none;
-}
-.content ul .ng-isolate-scope {
+.content .ng-isolate-scope {
   font-weight: 500;
   margin-right: 2px;
   height: 100%;
-  color: #f8f4c4;
-  background-color: rgba(255, 255, 255, 0.05);
   display: inline-block;
 }
-.content ul li {
-  float: inherit !important;
+.content .ng-isolate-scope ul {
+  float: left;
+  width: 150px;
+  color: #f8f4c4;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-bottom: none;
 }
-.content ul li a {
+.content .ng-isolate-scope ul li {
+  clear: both;
+  width: 100%;
+}
+.content .ng-isolate-scope ul li a {
   padding: 10px 10px 0 10px;
   margin: 0;
   border: none;
   border-radius: inherit;
   color: inherit;
 }
-.content ul li:hover {
+.content .ng-isolate-scope ul li:hover {
   background-color: #fdfdf2;
   color: #292c33;
 }
-.content ul li.active {
+.content .ng-isolate-scope ul li.active {
   background-color: #f8f4c4;
   border: none;
   color: #292c33;
 }
-.content ul li.active a {
+.content .ng-isolate-scope ul li.active a {
   color: inherit;
   background-color: inherit;
   border: none;
 }
-.content ul li.active a:hover {
+.content .ng-isolate-scope ul li.active a:hover {
   background-color: transparent;
   border: none;
 }
-.content ul a:hover {
+.content .ng-isolate-scope ul a:hover {
   background-color: transparent;
 }
-.content .tab-content {
+.content .ng-isolate-scope .tab-content {
   padding: 5px 10px 0 5px;
-  height: 250px;
+  height: 100%;
+  width: calc(100% - 150px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
-.content .tab-content a {
+.content .ng-isolate-scope .tab-content a {
   color: #eeeeed;
   border-bottom: 1px dashed #555554;
 }
 .knowledge-graph {
   position: absolute;
-  top: 450px;
-  left: 20%;
-  width: 80%;
-  height: calc(100% - 450px);
+  top: 160px;
+  left: 70%;
+  width: 30%;
+  height: calc(100% - 180px);
 }

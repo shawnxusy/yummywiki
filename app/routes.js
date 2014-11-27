@@ -325,16 +325,12 @@
 					listLength = listLength - 1;
 					if (listLength > 0) {
 						getSecondLevelSections(secondLevelSectionsURL, currentNode, false, callback);
-						console.log("first level content: not last");
 					}
 					else {
 						getSecondLevelSections(secondLevelSectionsURL, currentNode, true, callback);
-						console.log("first level content: last");
 
 					}
-					// console.log($(this).text());
-					// console.log(currentNode);
-					// seeAlsoList.push($(this).text());
+
 					currentNode = currentNode + 1;
 				});
 
@@ -350,35 +346,46 @@
 					for (var i = 0; i < sections.length; i++) {
 						if (sections[i].anchor === "See_also") {
 							var secondLevelContentURL = url.substring(0, url.search("&prop")) + "&prop=text&section=" + sections[i].index;
-							console.log(secondLevelContentURL);
 							getSecondLevelContent(secondLevelContentURL, current, last, callback);
+							return;
 						}
 					};
+					// If this is the last second level section yet no "related" is found, call back
+					getSecondLevelContent(null, current, last, callback);
 				}
 			})
 		}
 
 		function getSecondLevelContent(url, target, last, callback) {
-			request(url, function(error, response, json) {
-			if (!error) {
-				var content = JSON.parse(json);
-				var $ = cheerio.load(content.parse.text["*"]);
-				var listLength = $("li").length;
-
-				$("li").each(function() {
-					// Push each title to result and form links
-					var newNode = {"name": $(this).text(), "group": 2};
-					var newLink = {"source": currentNode, "target": target, "value": 1};
-					data.related["nodes"].push(newNode);
-					data.related["links"].push(newLink);
-
-					currentNode = currentNode + 1;
-				});
-
-				if (last === true) {
+			if ((last === true) && (!url)) {
+				setTimeout(function() {
 					callback();
-				}
+				}, 2000);
+				return;
 			}
+
+			request(url, function(error, response, json) {
+				if (!error) {
+					console.log("at second level");
+					var content = JSON.parse(json);
+					var $ = cheerio.load(content.parse.text["*"]);
+					var listLength = $("li").length;
+
+					$("li").each(function() {
+						// Push each title to result and form links
+						var newNode = {"name": $(this).text(), "group": 2};
+						var newLink = {"source": currentNode, "target": target, "value": 1};
+						data.related["nodes"].push(newNode);
+						data.related["links"].push(newLink);
+
+						currentNode = currentNode + 1;
+					});
+
+					if (last === true) {
+						console.log("callback 2")
+						callback();
+					}
+				}
 			});
 		}
 		
@@ -390,68 +397,6 @@
 
 
 	});
-
-	// Helper function to return second layer connections
- 	function processNode(address) {
-		var getSectionsURL =  "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + address.substring(address.search("wiki/") + 5) + "&prop=sections";
-		var seeAlsoList = [];
-
-		request(getSectionsURL, function(error, response, json) {
-			if (!error) {
-				var sections = JSON.parse(json).parse.sections;
-				for (var i = 0; i < sections.length; i++) {
-					if (sections[i].anchor === "See_also") {
-						// return (getSeeAlsoContent(sections[i].index));
-						var getSeeAlsoURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + address.substring(address.search("wiki/") + 5) + "&prop=text&section=" + sections[i].index;
-						// var seeAlsoList = [];
-
-						request(getSeeAlsoURL, function(error, response, json) {
-							if (!error) {
-								var seeAlso = JSON.parse(json);
-								var $ = cheerio.load(seeAlso.parse.text["*"]);
-
-								$("li").each(function() {
-									seeAlsoList.push($(this).text());
-								});
-
-								console.log("2nd inner list: ");
-								console.log(seeAlsoList);
-
-								// return seeAlsoList;
-							}
-						});
-									
-					}
-				}
-			}
-		});
-
-		return seeAlsoList;
-	}
-
-	// Make another request to retrieve the links
-	function getSeeAlsoContent(sectionNumber) {
-		var getSeeAlsoURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + address.substring(address.search("wiki/") + 5) + "&prop=text&section=" + sectionNumber;
-
-		var seeAlsoList = [];
-
-		request(getSeeAlsoURL, function(error, response, json) {
-			if (!error) {
-				var seeAlso = JSON.parse(json);
-				var $ = cheerio.load(seeAlso.parse.text["*"]);
-
-				$("li").each(function() {
-					seeAlsoList.push($(this).text());
-				});
-
-				console.log("2nd inner list: ");
-				console.log(seeAlsoList);
-
-				return seeAlsoList;
-			}
-		});
-	}
-
 	
 
 	// application -------------------------------------------------------------

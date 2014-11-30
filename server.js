@@ -25,6 +25,6 @@
 	require('./app/routes')(app);
 	
 	// listen (start app with node server.js) ======================================
-	app.listen(8000);
-	console.log("App listening on port 8000");
+	app.listen(process.env.PORT || 8000);
+	console.log("App listening on Heroku port");
 

@@ -26,7 +26,7 @@
     "method-override": "~2.1.2"
  },
  "scripts": {
-     "postinstall": "bower install",
+     "postinstall": "bower install"
 
   }
 }

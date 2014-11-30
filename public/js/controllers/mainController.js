@@ -5,6 +5,13 @@ mainController.controller('homeController', ['$scope', '$routeParams', '$locatio
 		$scope.searchString = "";
 		$scope.title = "Wiki Yummy";
 
+		if ($routeParams.ambTitle) {
+			$http.get('/search/' + $routeParams.ambTitle)
+				.success(function(data) {
+					$scope.ambQueries = data.ambQueries;
+				})
+		};
+
 		$scope.search = function() {
 			$http.get('/search/' + $scope.searchString)
 				.success(function(data) {
@@ -33,9 +40,28 @@ mainController.controller('homeController', ['$scope', '$routeParams', '$locatio
 
 }])
 
-mainController.controller('yummyController', ['$scope', '$http', '$routeParams', '$sce',
-	function($scope, $http, $routeParams, $sce) {
+mainController.controller('yummyController', ['$scope', '$http', '$routeParams', '$sce', '$location',
+	function($scope, $http, $routeParams, $sce, $location) {
 
+		$scope.search = function() {
+			$http.get('/search/' + $scope.searchString)
+				.success(function(data) {
+
+					// If the ajax search indicates the searched query is ambiguous
+					// Give a list of ambiguous terms for user to choose
+					if (data.flag == "multiple-result") {
+						$location.path('/home/' + $scope.searchString);
+					}
+					// If the ajax search query returns a unique result
+					// Lead user to that page immediately
+					else if (data.flag == "one-result") {
+						$location.path('/yummy/' + data.query);
+					}
+					// This line is for fun and should be deleted
+					$scope.title = data.flag; 
+					$scope.searchString = "";
+				})
+		};
 
 		// Ask Node for the content of a Wikipedia query
 		$http.get('/query/' + $routeParams.query)
@@ -45,20 +71,32 @@ mainController.controller('yummyController', ['$scope', '$http', '$routeParams',
 				$scope.summary = data.summary;
 				$scope.toc = data.toc;
 
+				// Pre-process content
 				for (item in data.content) {
 					item.disabled = true;
 				}
 				data.content[0].active = true;
 				data.content[0].disabled = false;
+
+				// If some content is none, do not display even the header
+				for (var i = 0; i < data.content.length; i++) {
+					if (data.content[i].paragraphs.length < 1) {
+						data.content.splice(i, 1);
+					}
+				}
+				if (data.content[data.content.length - 1].paragraphs.length < 1) {
+					data.content.splice(data.content.length - 1, 1);
+				}
 				
 				$scope.content = data.content;
 
-				// $scope.data = data.related;
+				if ($scope.infobox === "") {
+				}
 
 				$scope.showDetail = function(item) {
-					console.log("clicked");
 					alert(item.name);
 				};
+
 			}
 		)
 
@@ -73,40 +111,5 @@ mainController.controller('yummyController', ['$scope', '$http', '$routeParams',
 			return $sce.trustAsHtml(html_code);
 		}
 
-	
 
-		// when landing on the page, get all todos and show them
-		// $http.get('/api/todos')
-		// 	.success(function(data) {
-		// 		$scope.todos = data;
-		// 		console.log(data);
-		// 	})
-		// 	.error(function(data) {
-		// 		console.log('Error: ' + data);
-		// 	});
-
-		// // when submitting the add form, send the text to the node API
-		// $scope.createTodo = function() {
-		// 	$http.post('/api/todos', $scope.formData)
-		// 		.success(function(data) {
-		// 			$scope.formData = {}; // clear the form so our user is ready to enter another
-		// 			$scope.todos = data;
-		// 			console.log(data);
-		// 		})
-		// 		.error(function(data) {
-		// 			console.log('Error: ' + data);
-		// 		});
-		// };
-
-		// // delete a todo after checking it
-		// $scope.deleteTodo = function(id) {
-		// 	$http.delete('/api/todos/' + id)
-		// 		.success(function(data) {
-		// 			$scope.todos = data;
-		// 			console.log(data);
-		// 		})
-		// 		.error(function(data) {
-		// 			console.log('Error: ' + data);
-		// 		});
-		// };
 }])

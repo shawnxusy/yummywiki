@@ -1,30 +1,25 @@
-	<div class="container">
+<div class="container container-home">
 
-		<div class="jumbotron text-center">
-			<h1> {{ title }} </h1>
-		</div>
+	<div class="hero-title">
+		<h1> Yummy Wiki </h1>
+	</div>
 
-		<div class="row">
-			<div class="col-sm-8 col-sm-offset-2 text-center">
-				<form>
-					<div class="form-group">
+	<div class="hero-icon">
+		<img id="poor-cookie" src="/img/cookie.png" alt="cookie-icon">
+	</div>
 
-						<input type="text" class="form-control input-lg text-center" placeholder="Oh Yummy Wiki" ng-model="searchString">
+	<form class="hero-search" ng-submit="search()">
+		<input type="text" class="form-control input-lg text-center" placeholder="Oh Yummy Wiki" ng-model="searchString">
+		<a type="submit" class="search-button" ng-click="search()">Yum!</a>
+	</form>
 
-					</div>
-
-					<button type="submit" class="btn btn-danger btn-lg" ng-click="search()">Yummy</button>
-				</form>
-
-				<ul class="list-group">
-					<li class="list-group-item" ng-repeat="q in ambQueries">
-						<a ng-click="accuSearch(q.url)" class="pointer">{{ q.title }}</a>
-					</li>
-				</ul>
-
-			</div>
+	<div class="amb-results">
+		<div class="amb-result" ng-repeat="q in ambQueries">
+			<a ng-click="accuSearch(q.url)" class="pointer">{{ q.title }}</a>
 		</div>
 	</div>
+
+</div>
 
 
 		

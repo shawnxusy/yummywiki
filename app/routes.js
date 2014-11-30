@@ -151,6 +151,9 @@
 					};
 				};
 
+				// Pre-processing: add a ng-mouseover to all the anchors
+				$("a").attr("class", "anchor-tooltip");
+
 				$("body").children().each(function() {
 					// Some paragraph are empty, skip them
 					if (!$(this).text()) {
@@ -279,8 +282,8 @@
 	
 	app.get('/graph/:text', function(req, res) {
 		var text = req.params.text;
+		console.log(text);
 		var firstLevelSectionsURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + text;
-
 		var data = {related: {}};
 		data.related["nodes"] = [];
 		data.related["links"] = [];
@@ -294,6 +297,25 @@
 		function getFirstLevelSections(url, callback) {
 			request(url, function(error, response, json) {
 			if (!error) {
+				var $ = cheerio.load(JSON.parse(json).parse.text["*"]);
+
+				if ($("p").first().text().indexOf("Redirect to") > -1) {
+					// If this is a redirection page
+					var realTitle = $("a").first().text();
+					var realURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + realTitle;
+
+					request(realURL, function(error, response, json) {
+						var sections = JSON.parse(json).parse.sections;
+						for (var i = 0; i < sections.length; i++) {
+							if (sections[i].anchor === "See_also") {
+								var firstLevelContentURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + realTitle + "&prop=text&section=" + sections[i].index;
+								getFirstLevelContent(firstLevelContentURL, callback);
+							}
+						}
+					})
+				}
+
+				// If not
 				var sections = JSON.parse(json).parse.sections;
 				for (var i = 0; i < sections.length; i++) {
 					if (sections[i].anchor === "See_also") {
@@ -310,25 +332,36 @@
 			if (!error) {
 				var content = JSON.parse(json);
 				var $ = cheerio.load(content.parse.text["*"]);
-				var listLength = $("li").length;
 
-				$("li").each(function() {
+				// Preprocess the image files
+				$("ul li").each(function() {
+					var href = $(this).find("a").attr("href");
+					if (href.indexOf("File:") > -1) {
+						$(this).remove();
+					}
+				})
+				
+				var listLength = $("ul li").length;
+
+				$("ul li").each(function() {
+					var href = $(this).find("a").attr("href");
+					// Do not include if it's a photo
+					
 					// Push each title to result and form links
-					var newNode = {"name": $(this).text(), "group": 1};
+					var newNode = {"name": $(this).text(), "group": 1, "wikihref": $(this).find("a").attr("href").substring(6)};
 					var newLink = {"source": currentNode, "target": 0, "value": 2};
 					data.related["nodes"].push(newNode);
 					data.related["links"].push(newLink);
 
-					var href = $(this).find("a").attr("href");
 					var secondLevelSectionsURL =  "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + href.substring(href.search("wiki/") + 5) + "&prop=sections";
 
 					listLength = listLength - 1;
+					console.log(secondLevelSectionsURL + "  " + listLength);
 					if (listLength > 0) {
 						getSecondLevelSections(secondLevelSectionsURL, currentNode, false, callback);
 					}
 					else {
 						getSecondLevelSections(secondLevelSectionsURL, currentNode, true, callback);
-
 					}
 
 					currentNode = currentNode + 1;
@@ -366,14 +399,22 @@
 
 			request(url, function(error, response, json) {
 				if (!error) {
-					console.log("at second level");
 					var content = JSON.parse(json);
 					var $ = cheerio.load(content.parse.text["*"]);
-					var listLength = $("li").length;
 
-					$("li").each(function() {
+					// Preprocess the image files
+					$("ul li").each(function() {
+						var href = $(this).find("a").attr("href");
+						if (href.indexOf("File:") > -1) {
+							$(this).remove();
+						}
+					});
+
+					var listLength = $("ul li").length;
+
+					$("ul li").each(function() {
 						// Push each title to result and form links
-						var newNode = {"name": $(this).text(), "group": 2};
+						var newNode = {"name": $(this).text(), "group": 2, "wikihref": $(this).find("a").attr("href").substring(6)};
 						var newLink = {"source": currentNode, "target": target, "value": 1};
 						data.related["nodes"].push(newNode);
 						data.related["links"].push(newLink);
@@ -382,7 +423,6 @@
 					});
 
 					if (last === true) {
-						console.log("callback 2")
 						callback();
 					}
 				}
@@ -390,14 +430,48 @@
 		}
 		
 		getFirstLevelSections(firstLevelSectionsURL, function(){
-			// console.log(data);
+			console.log("Sending knowledge graph");
 			res.json(data);
 		});
 
-
-
 	});
 	
+
+	app.get('/summary/:text', function(req, res) {
+		var text = req.params.text;
+		var data = {summary: ""};
+		var getSummaryURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + text + "&prop=text&section=" + 0;
+
+		request(getSummaryURL, function(error, response, json) {
+			if (!error) {
+				var content = JSON.parse(json);
+				var $ = cheerio.load(content.parse.text["*"]);
+				$("sup").remove();
+				data.summary = $("p").first().text();
+
+				// If there is a re-direct
+				if (data.summary.indexOf("Redirect to") > -1) {
+					var href = $("a").attr("href")
+					var redirectedURL = "http://en.wikipedia.org/w/api.php?format=json&action=parse&page=" + href.substring(href.search("title=") + 6) + "&prop=text&section=" + 0;
+
+					request(redirectedURL, function(error, response, json) {
+						if (!error) {
+							var content = JSON.parse(json);
+							var $ = cheerio.load(content.parse.text["*"]);
+							$("sup").remove();
+							data.summary = $("p").first().text();
+							res.json(data);
+						}
+					})
+				} 
+				// If no redirect
+				else {
+					res.json(data);
+				}
+			}
+		})
+
+	});
 
 	// application -------------------------------------------------------------
 	app.get('*', function(req, res) {

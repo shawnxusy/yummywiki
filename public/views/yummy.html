@@ -2,6 +2,7 @@
 
 	<div class="top-search">
 		<form ng-submit="search()">
+			<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
 			<input type="text" placeholder="Start a new search here and press enter" ng-model="searchString">
 		</form>
 	</div>
@@ -23,6 +24,8 @@
 		<div ng-bind-html="renderHtml(infobox)"></div>
 	</div>
 
+	<div class="glass tooltip">
+	</div>
 
 	<div class="content">
 		<tabset>

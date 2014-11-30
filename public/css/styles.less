@@ -1,18 +1,25 @@
 /* ------ Global variables ------ */
 @nice_purple: #9898c2;
+@nice_red: #f06164;
 @nice_pink: #cf3e61;
 @nice_yellow: #f8f4c4;
 @scroll_thumb_color: #f55e51;
-@background_color: #292c33;
-@font_color: #fffffe;
-@main_font: 'Lato', 'helvetica neue', sans-serif;
+@background_color: #fefff7;
+@font_color: #635255;
+@main_font: 'Gentium Book Basic', 'Arial', serif;
+@title_font: 'Abril Fatface', Arial, serif;
 
 /* ------ Global definitions ------ */
+html, .ng-scope {
+	height: 100%;
+}
+
 body {
 	margin: 0;
 	font-family: @main_font;
 	background-color: @background_color;
 	color: @font_color;
+	height: 100%;
 }
 
 /* For Angular Bootstrap */
@@ -25,7 +32,9 @@ body {
 	padding: 0;
 	width: 100%;
 	height: 100%;
+	font-family: @main_font;
 }
+
 
 /* Vertically center almost any element */
 .vertical_center {
@@ -51,11 +60,11 @@ body {
 ::-webkit-scrollbar-thumb {
     -webkit-border-radius: 1px;
     border-radius: 1px;
-    background: @nice_purple; 
+    background: @nice_red; 
     -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.5); 
 }
 ::-webkit-scrollbar-thumb:window-inactive {
-	background: @nice_purple; 
+	background: @nice_red; 
 }
 
 /* -------- Global mixins -------- */
@@ -71,6 +80,100 @@ body {
 	}
 }
 
+.border-radius(@radius) {
+	-webkit-border-radius: @radius;
+	-moz-border-radius: @radius;
+	border-radius: @radius;
+}
+
+.box-shadow(@h; @v; @blur; @rgba) {
+	-webkit-box-shadow: @h @v @blur @rgba;
+	-moz-box-shadow: @h @v @blur @rgba;
+	box-shadow: @h @v @blur @rgba;
+}
+
+/* ------ Index page ------ */
+.container-home {
+	background-color: @nice_red;
+}
+
+.hero-title {
+	position: relative;
+	margin-top: 12%;
+	text-align: center;
+	color: #fff;
+
+	h1 {
+		font-size: 6em;
+		font-family: @title_font;
+	}
+}
+
+.hero-icon {
+	margin-top: 2%;
+	text-align: center;
+
+	#poor-cookie {
+		width: 120px;
+		height: auto;
+	}
+}
+
+.hero-search {
+	position: relative;
+	width: 60%;
+	text-align: center;
+	margin-top: 5%;
+	margin-left: 20%;
+	color: #fff;
+
+	.search-button {
+		position: absolute;
+		right: 2%;
+		top: 20%;
+		font-size: 0.9em;
+		background-color: @nice_red;
+		color: #fff;
+		padding: 6px 12px;
+		.border-radius(4px);
+		.box-shadow(@h: 0px; @v: 2px; @blur: 2px; @rgba: rgba(0,0,0,0.15));
+
+		&:hover {
+			cursor: pointer;
+			text-decoration: none;
+			background-color: darken(@nice_red, 10%);
+		};
+	}
+}
+
+.amb-results {
+	position: relative;
+	width: 80%;
+	margin-left: 10%;
+	margin-top: 5%;
+	height: 35%;
+	overflow: auto;
+
+	.amb-result {
+		float: left;
+		height: 3em;
+		margin: 5px;
+
+		a {
+			padding: 15px;
+			background-color: rgba(50,50,50,0.2);
+			line-height: 0.5em;
+			color: #fff;
+			display: block;
+
+			&:hover {
+				cursor: pointer;
+				text-decoration: none;
+			};
+		}
+	}
+}
+
 /* ------ Yummy wiki ------ */
 .top-search {
 	position: absolute;
@@ -81,16 +184,23 @@ body {
 	form {
 		height: 100%;
 
+		.glyphicon {
+			position: absolute;
+			color: lighten(@nice_red, 20%);
+			top: 30%;
+			left: 20px;
+		}
+
 		input {
 			height: 100%;
 			width: 100%;
 			border: 0;
-			padding: 0 0 0 30px;
-			color: lighten(@nice_purple, 30%);
-			background-color: @nice_purple;
+			padding: 0 0 0 50px;
+			color: lighten(@nice_red, 30%);
+			background-color: @nice_red;
 			font-size: 0.9em;
 
-			.placeholder(lighten(@nice_purple, 20%));
+			.placeholder(lighten(@nice_red, 20%));
 
 			&:focus {
 				outline: none;
@@ -113,11 +223,13 @@ body {
 		h3 {
 			margin: 0;
 			.vertical_center;
+			font-family: @title_font;
+			text-transform: uppercase;
 		}
 	}
 
 	.summary {
-		height: 120px;
+		height: 140px;
 		width: 80%;
 		padding: 10px 10px 10px 0;
 		float: right;
@@ -132,9 +244,9 @@ body {
 
 .infobox {
 	position: absolute;
-	top: 160px;
+	top: 180px;
 	width: 20%;
-	height: calc(~"100% - 180px");
+	height: calc(~"100% - 200px");
 	padding: 0 10px 0 10px;
 	font-size: 0.9em;
 	overflow-y: scroll;
@@ -156,13 +268,28 @@ body {
 	}
 }
 
+.glass {
+	z-index: 100;
+	position: absolute;
+	height: 20px;
+	width: 80%;
+	top: 160px;
+	left: 20%;
+	background: -moz-linear-gradient(top,  rgba(254,255,247,0.1) 0%, rgba(254,255,247,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(254,255,247,0.1)), color-stop(100%,rgba(254,255,247,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(254,255,247,0.1) 0%,rgba(254,255,247,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(254,255,247,0.1) 0%,rgba(254,255,247,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(254,255,247,0.1) 0%,rgba(254,255,247,1) 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(254,255,247,0.1) 0%,rgba(254,255,247,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1afefff7', endColorstr='#fefff7',GradientType=0 ); /* IE6-9 */
+}
 
 .content {
 	position: absolute;
-	top: 160px;
+	top: 180px;
 	left: 20%;
 	width: 50%;
-	height: calc(~"100% - 180px");
+	height: calc(~"100% - 200px");
 	color: @font_color;
 
 	.ng-isolate-scope {
@@ -174,13 +301,16 @@ body {
 		ul {
 			float: left;
 			width: 150px;
-			color: @nice_yellow;
-			background-color: rgba(255,255,255,0.05);
+			color: lighten(@font_color, 10%);
+			font-weight: 500;
+			background-color: #fff6f5;
 			border-bottom: none;
 
 			li {
+				border-bottom: 1px solid #ffe6df;
 				clear: both;
 				width: 100%;
+				min-height: 3em;
 
 				a {
 					padding: 10px 10px 0 10px;
@@ -191,13 +321,13 @@ body {
 				}
 
 				&:hover {
-					background-color: lighten(@nice_yellow, 10%);
+					background-color: lighten(@nice_red, 10%);
 					color: @background_color;
 				};
 			}
 
 			li.active {
-				background-color: @nice_yellow;
+				background-color: @nice_red;
 				border: none;
 				color: @background_color;
 
@@ -221,11 +351,16 @@ body {
 		}
 
 		.tab-content {
-			padding: 5px 10px 0 5px;
+			padding: 5px 10px 0 15px;
 			height: 100%;
 			width: calc(~"100% - 150px");
 			overflow-y: scroll;
 			overflow-x: hidden;
+
+			.ng-scope {
+				height: auto;
+			}
+
 			a {
 				color: @font_color - #111;
 				border-bottom: 1px dashed (@font_color - #aaa);
@@ -236,16 +371,36 @@ body {
 
 .knowledge-graph {
 	position: absolute;
-	top: 160px;
+	top: 180px;
 	left: 70%;
 	width: 30%;
-	height: calc(~"100% - 180px");
+	height: calc(~"100% - 200px");
+
+	.graph {
+		width: 100%;
+		height: 70%;
+
+		.graph-placeholder {
+			background-image: url("../img/graph-holder.png");
+		}
+	}
+
+	.illustration {
+		width: 100%;
+		height: 30%;
+		overflow-y: scroll;
+	}
 }
 
-
-
-
-
+.wiki-tooltip {
+	padding: 10px;
+	line-height: 1.5em;
+	max-width: 400px;
+	width: 400px;
+	background-color: rgba(99, 82, 85, 0.9);
+	color: @background_color;
+	border-color: @font_color;
+}
 
 
 

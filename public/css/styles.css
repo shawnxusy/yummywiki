@@ -1,10 +1,15 @@
 /* ------ Global variables ------ */
 /* ------ Global definitions ------ */
+html,
+.ng-scope {
+  height: 100%;
+}
 body {
   margin: 0;
-  font-family: 'Lato', 'helvetica neue', sans-serif;
-  background-color: #292c33;
-  color: #fffffe;
+  font-family: 'Gentium Book Basic', 'Arial', serif;
+  background-color: #fefff7;
+  color: #635255;
+  height: 100%;
 }
 /* For Angular Bootstrap */
 .nav,
@@ -18,6 +23,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
+  font-family: 'Gentium Book Basic', 'Arial', serif;
 }
 /* Vertically center almost any element */
 .vertical_center {
@@ -34,19 +40,93 @@ body {
 ::-webkit-scrollbar-track {
   -webkit-border-radius: 1px;
   border-radius: 1px;
-  background: #292c33;
+  background: #fefff7;
 }
 /* Handle */
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 1px;
   border-radius: 1px;
-  background: #9898c2;
+  background: #f06164;
   -webkit-box-shadow: inset 0 0 1px rgba(0, 0, 0, 0.5);
 }
 ::-webkit-scrollbar-thumb:window-inactive {
-  background: #9898c2;
+  background: #f06164;
 }
 /* -------- Global mixins -------- */
+/* ------ Index page ------ */
+.container-home {
+  background-color: #f06164;
+}
+.hero-title {
+  position: relative;
+  margin-top: 12%;
+  text-align: center;
+  color: #fff;
+}
+.hero-title h1 {
+  font-size: 6em;
+  font-family: 'Abril Fatface', Arial, serif;
+}
+.hero-icon {
+  margin-top: 2%;
+  text-align: center;
+}
+.hero-icon #poor-cookie {
+  width: 120px;
+  height: auto;
+}
+.hero-search {
+  position: relative;
+  width: 60%;
+  text-align: center;
+  margin-top: 5%;
+  margin-left: 20%;
+  color: #fff;
+}
+.hero-search .search-button {
+  position: absolute;
+  right: 2%;
+  top: 20%;
+  font-size: 0.9em;
+  background-color: #f06164;
+  color: #fff;
+  padding: 6px 12px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+}
+.hero-search .search-button:hover {
+  cursor: pointer;
+  text-decoration: none;
+  background-color: #ec3236;
+}
+.amb-results {
+  position: relative;
+  width: 80%;
+  margin-left: 10%;
+  margin-top: 5%;
+  height: 35%;
+  overflow: auto;
+}
+.amb-results .amb-result {
+  float: left;
+  height: 3em;
+  margin: 5px;
+}
+.amb-results .amb-result a {
+  padding: 15px;
+  background-color: rgba(50, 50, 50, 0.2);
+  line-height: 0.5em;
+  color: #fff;
+  display: block;
+}
+.amb-results .amb-result a:hover {
+  cursor: pointer;
+  text-decoration: none;
+}
 /* ------ Yummy wiki ------ */
 .top-search {
   position: absolute;
@@ -57,23 +137,29 @@ body {
 .top-search form {
   height: 100%;
 }
+.top-search form .glyphicon {
+  position: absolute;
+  color: #f9bebf;
+  top: 30%;
+  left: 20px;
+}
 .top-search form input {
   height: 100%;
   width: 100%;
   border: 0;
-  padding: 0 0 0 30px;
-  color: #f8f8fb;
-  background-color: #9898c2;
+  padding: 0 0 0 50px;
+  color: #fdeded;
+  background-color: #f06164;
   font-size: 0.9em;
 }
 .top-search form input:-moz-placeholder {
-  color: #d8d8e8;
+  color: #f9bebf;
 }
 .top-search form input:-ms-input-placeholder {
-  color: #d8d8e8;
+  color: #f9bebf;
 }
 .top-search form input::-webkit-input-placeholder {
-  color: #d8d8e8;
+  color: #f9bebf;
 }
 .top-search form input:focus {
   outline: none;
@@ -94,23 +180,25 @@ body {
   position: relative;
   top: 50%;
   transform: translateY(-50%);
+  font-family: 'Abril Fatface', Arial, serif;
+  text-transform: uppercase;
 }
 .top-yummy .summary {
-  height: 120px;
+  height: 140px;
   width: 80%;
   padding: 10px 10px 10px 0;
   float: right;
   overflow-y: scroll;
 }
 .top-yummy .summary a {
-  color: #eeeeed;
-  border-bottom: 1px dashed #555554;
+  color: #524144;
+  border-bottom: 1px dashed #000000;
 }
 .infobox {
   position: absolute;
-  top: 160px;
+  top: 180px;
   width: 20%;
-  height: calc(100% - 180px);
+  height: calc(100% - 200px);
   padding: 0 10px 0 10px;
   font-size: 0.9em;
   overflow-y: scroll;
@@ -121,8 +209,8 @@ body {
   height: auto;
 }
 .infobox a {
-  color: #eeeeed;
-  border-bottom: 1px dashed #555554;
+  color: #524144;
+  border-bottom: 1px dashed #000000;
 }
 .infobox tr,
 .infobox th,
@@ -130,13 +218,35 @@ body {
   color: inherit !important;
   background-color: inherit !important;
 }
-.content {
+.glass {
+  z-index: 100;
   position: absolute;
+  height: 20px;
+  width: 80%;
   top: 160px;
   left: 20%;
+  background: -moz-linear-gradient(top, rgba(254, 255, 247, 0.1) 0%, #fefff7 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(254, 255, 247, 0.1)), color-stop(100%, #fefff7));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, rgba(254, 255, 247, 0.1) 0%, #fefff7 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, rgba(254, 255, 247, 0.1) 0%, #fefff7 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, rgba(254, 255, 247, 0.1) 0%, #fefff7 100%);
+  /* IE10+ */
+  background: linear-gradient(to bottom, rgba(254, 255, 247, 0.1) 0%, #fefff7 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#1afefff7', endColorstr='#fefff7', GradientType=0);
+  /* IE6-9 */
+}
+.content {
+  position: absolute;
+  top: 180px;
+  left: 20%;
   width: 50%;
-  height: calc(100% - 180px);
-  color: #fffffe;
+  height: calc(100% - 200px);
+  color: #635255;
 }
 .content .ng-isolate-scope {
   font-weight: 500;
@@ -147,13 +257,16 @@ body {
 .content .ng-isolate-scope ul {
   float: left;
   width: 150px;
-  color: #f8f4c4;
-  background-color: rgba(255, 255, 255, 0.05);
+  color: #7f696d;
+  font-weight: 500;
+  background-color: #fff6f5;
   border-bottom: none;
 }
 .content .ng-isolate-scope ul li {
+  border-bottom: 1px solid #ffe6df;
   clear: both;
   width: 100%;
+  min-height: 3em;
 }
 .content .ng-isolate-scope ul li a {
   padding: 10px 10px 0 10px;
@@ -163,13 +276,13 @@ body {
   color: inherit;
 }
 .content .ng-isolate-scope ul li:hover {
-  background-color: #fdfdf2;
-  color: #292c33;
+  background-color: #f49092;
+  color: #fefff7;
 }
 .content .ng-isolate-scope ul li.active {
-  background-color: #f8f4c4;
+  background-color: #f06164;
   border: none;
-  color: #292c33;
+  color: #fefff7;
 }
 .content .ng-isolate-scope ul li.active a {
   color: inherit;
@@ -184,20 +297,44 @@ body {
   background-color: transparent;
 }
 .content .ng-isolate-scope .tab-content {
-  padding: 5px 10px 0 5px;
+  padding: 5px 10px 0 15px;
   height: 100%;
   width: calc(100% - 150px);
   overflow-y: scroll;
   overflow-x: hidden;
 }
+.content .ng-isolate-scope .tab-content .ng-scope {
+  height: auto;
+}
 .content .ng-isolate-scope .tab-content a {
-  color: #eeeeed;
-  border-bottom: 1px dashed #555554;
+  color: #524144;
+  border-bottom: 1px dashed #000000;
 }
 .knowledge-graph {
   position: absolute;
-  top: 160px;
+  top: 180px;
   left: 70%;
   width: 30%;
-  height: calc(100% - 180px);
+  height: calc(100% - 200px);
+}
+.knowledge-graph .graph {
+  width: 100%;
+  height: 70%;
+}
+.knowledge-graph .graph .graph-placeholder {
+  background-image: url("../img/graph-holder.png");
+}
+.knowledge-graph .illustration {
+  width: 100%;
+  height: 30%;
+  overflow-y: scroll;
+}
+.wiki-tooltip {
+  padding: 10px;
+  line-height: 1.5em;
+  max-width: 400px;
+  width: 400px;
+  background-color: rgba(99, 82, 85, 0.9);
+  color: #fefff7;
+  border-color: #635255;
 }

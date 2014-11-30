@@ -1,6 +1,6 @@
 var d3Directive = angular.module('d3Directive', ['d3']);
 
-d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', function($window, $timeout, d3Service) {
+d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', '$http', function($window, $timeout, d3Service, $http) {
 	return {
 		restrict: 'EA',
 		scope: {
@@ -19,22 +19,16 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 				// The returned d3 is the d3 drawing object
 				var svg = d3.select(element[0])
 							.append("svg")
-							.attr('width', '100%')
-							.attr('height', '100%')
-							.style('float', 'left');
+							.attr('class', 'graph');
 
-				// var infobox = d3.select(element[0])
-				// 				.append("div")
-				// 				.attr('width', '30%')
-				// 				.attr('height', '100%')
-				// 				.style('float', 'right')
-				// 				.style('width', '30%');
+				var infobox = d3.select(element[0])
+								.append("div")
+								.attr('class', 'illustration');
 
 				// Browser onresize event
 				window.onresize = function() {
 					scope.$apply();
 				};
-
 
 				// Watching resize event
 				scope.$watch(function() {
@@ -51,14 +45,26 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 
 				scope.render = function(graph) {
 
+					if (!graph) {
+						svg.selectAll("image").remove();
+						svg.append("image")
+							.attr("xlink:href", "/img/graph-holder.png")
+							.attr("width", 300)
+							.attr("height", 300);
+						return;
+					}
+
+					svg.selectAll("image").remove();
 					svg.selectAll(".node").remove();
 					svg.selectAll(".link").remove();
 
 					console.log("re-rendered");
-					// Return if no data passed at all
-					if (!graph) return;
 
-					var color = d3.scale.category20();
+					// var color = d3.scale.category20();
+					var color = d3.scale.ordinal()
+									.domain([0,1,2,3])
+									.range(["#3a3042", "#a3c95b", "#90bede", "#729b79"]);
+
 					var chargeAmount = -150;
 					var distanceAmount = 60;
 
@@ -80,7 +86,7 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 					    .style("stroke-width", function (d) {
 						    return Math.sqrt(d.value);
 						})
-						.style("stroke", "rgba(100,100,100,0.4)")
+						.style("stroke", "rgba(180,180,180,0.3)")
 						.style("opacity", "60%");
 
 					//Do the same with the circles for the nodes - no 
@@ -105,43 +111,76 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 					      .text(function(d) { 
 					      	return d.name;
 					      })
-					      .style("fill", "#fffffe")
+					      .attr("wikihref", function(d) {
+					      	return d.wikihref;
+					      })
+					      .style("fill", "#635255")
 					      .style("font-size", function(d) {
-					      	return (14 - d.group * 4 + "px");
+						      return (14 - d.group * 3 + "px");
 					      });
 
 					//End changed
 					function nodeHovered() {
+						infobox.selectAll("text").remove();
+						infobox.selectAll("div").remove();
+						// Clear everything
+						svg.selectAll("circle").style("fill", function(d) {
+							return color(d.group);
+						})
+							.style("r", 3);
+						svg.selectAll("text").style("fill", "#635255")
+							.style("font-size", function(d) {
+						      	return (14 - d.group * 3 + "px");
+				        });
+
 						d3.select(this).select("circle")
 							.transition()
 							.duration(500)
-							.style("fill", "#4be314")
+							.style("fill", "#822e01")
+							.attr("r", 5)
 							.ease("elastic");
 
 						d3.select(this).select("text")
 							.transition()
 							.duration(500)
-							.style("fill", "#2be3d6")
+							.style("fill", "#822e01")
+							.style("font-size", "14px")
 							.ease("elastic");
 
-						// infobox.append("text")
-						// 	.text(d3.select(this).text());
+						infobox.append("text")
+							.text(d3.select(this).text())
+							.style("font-weight", "600");
+
+						// Ajax call
+						d3.json('/summary/' + d3.select(this).select("text").attr("wikihref"), function(error, json) {
+							if (error) {
+								console.log(error);
+							}
+							var data = json;
+							infobox.append("div")
+									.text(data.summary);
+						})
+							
 
 					};
 
 					function nodeUnHovered() {
 						// Clear everything
-						// infobox.selectAll("*").remove();
 						svg.selectAll("circle").style("fill", function(d) {
 							return color(d.group);
-						});
-						svg.selectAll("text").style("fill", "#fffffe");
+						})
+							.style("r", 3);
+						svg.selectAll("text").style("fill", "#635255")
+							.style("font-size", function(d) {
+						      	return (14 - d.group * 3 + "px");
+					      });
 					}
 
 					//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
 					force.on("tick", function () {
-						node[0].x = width / 2;
-						node[0].y = height / 2;
+						var nodes = force.nodes();
+						nodes[0].x = width / 2;
+						nodes[0].y = height * 0.35;
 					    link.attr("x1", function (d) {
 					        return d.source.x;
 					    })
@@ -178,4 +217,4 @@ d3Directive.directive('knowledgeGraph', ['$window', '$timeout', 'd3Service', fun
 			});
 		}
 	};
-}])
+}]);
